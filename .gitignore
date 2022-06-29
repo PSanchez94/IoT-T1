@@ -99,3 +99,4 @@ managed_components
 
 # pytest log
 pytest_embedded_log/
+udp_client/.devcontainer/devcontainer.json
