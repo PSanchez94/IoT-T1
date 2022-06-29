@@ -38,7 +38,6 @@
 
 
 static const char *TAG = "example";
-static const char *payload = "Message from ESP32 ";
 
 
 
@@ -53,8 +52,6 @@ typedef struct Data4 {
     int32_t z_acc[1600];
 };
 
-
-
 typedef struct Packet4 {
     struct Header header;
 
@@ -63,19 +60,27 @@ typedef struct Packet4 {
 
     struct Data4 data4;
 }
-/**/
+*/
+
+struct Header header;
+char payload[sizeof(header)];
 
 
 static void udp_client_task(void *pvParameters) {
 
     // Received message
-    char status;
+    char rx_buffer[4];
 
 
     char host_ip[] = HOST_IP_ADDR;
     int addr_family = 0;
     int ip_protocol = 0;
 
+
+    header.id_device = INT16_MAX;
+    header.mac = INT64_MAX;
+    header.id_protocol = INT8_MAX;
+    header.len = 19216;
 
     // Socket loop
     while (1) {
@@ -118,6 +123,9 @@ static void udp_client_task(void *pvParameters) {
             socklen_t socklen = sizeof(source_addr);
 
 
+            memcpy ( &payload, &header, sizeof(header) );
+
+
             // Send packet
             int err = sendto(sock, payload, strlen(payload), 0, (struct sockaddr *) &dest_addr, sizeof(dest_addr));
             // Err handling
@@ -138,10 +146,10 @@ static void udp_client_task(void *pvParameters) {
             }
             // Data received
             else {
-                rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string
+                rx_buffer[len] = 0; // Null-termination
                 ESP_LOGI(TAG, "Received %d bytes from %s:", len, host_ip);
                 ESP_LOGI(TAG, "%s", rx_buffer);
-                if (strncmp(status, '1', 4) == 0) {
+                if (rx_buffer[0] == '1') {
                     ESP_LOGI(TAG, "Received expected message, reconnecting");
                     break;
                 }

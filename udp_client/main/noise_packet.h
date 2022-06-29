@@ -10,6 +10,13 @@ unsigned char * serialize_char(unsigned char *buffer, char value)
 }
 
 
+typedef struct Header {
+    int16_t id_device;
+    int64_t mac; // 8 bytes instead of 6
+    int8_t id_protocol;
+    int16_t len;
+};
+
 /*
 unsigned char * serialize_bytes(unsigned char *buffer, int value) {
   buffer[0] = value >> 24;
@@ -19,15 +26,8 @@ unsigned char * serialize_bytes(unsigned char *buffer, int value) {
   return buffer + 4;
 }
 
-/*
-typedef struct Header {
 
-    int16_t id_device;
-    int64_t mac; // 8 bytes instead of 6
-    int8_t id_protocol;
-    int16_t len;
-    
-};
+
 
 
 typedef struct Data0 {
@@ -55,10 +55,9 @@ typedef struct Data3 {
     int64_t z_amp;
     int64_t z_frec;
 };
-/**/
 
 
-/*
+
 typedef struct ConfigData {
     int8_t status;
     int8_t ID_Protocol;
@@ -97,4 +96,4 @@ typedef struct SensorData {
     int16_t BMI270_Gir_y[2000];
     int16_t BMI270_Gir_z[2000];
 } SensorData;
-/**/
+*/
